@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  mongo1:
+    image: mongo:latest
+    container_name: mongo1
+    networks:
+      - mongo-net
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+
+  mongo2:
+    image: mongo:latest
+    container_name: mongo2
+    networks:
+      - mongo-net
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+
+  mongo3:
+    image: mongo:latest
+    container_name: mongo3
+    networks:
+      - mongo-net
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+
+  haproxy:
+    image: haproxy:latest
+    container_name: haproxy
+    networks:
+      - mongo-net
+    ports:
+      - "27020:27020"
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+
+networks:
+  mongo-net:
+    driver: bridge
