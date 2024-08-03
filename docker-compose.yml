@@ -6,27 +6,51 @@ services:
     container_name: mongo1
     networks:
       - mongo-net
+    ports:
+      - "27018:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=example
+    entrypoint: ["/data/configdb/entrypoint.sh"]
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/configdb/mongo-keyfile"]
+    volumes:
+      - mongo1-data:/data/db
+      - ./mongo-keyfile:/data/configdb/mongo-keyfile:ro
+      - ./entrypoint.sh:/data/configdb/entrypoint.sh:ro
 
   mongo2:
     image: mongo:latest
     container_name: mongo2
     networks:
       - mongo-net
+    ports:
+      - "27019:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=example
+    entrypoint: ["/data/configdb/entrypoint.sh"]
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/configdb/mongo-keyfile"]
+    volumes:
+      - mongo2-data:/data/db
+      - ./mongo-keyfile:/data/configdb/mongo-keyfile:ro
+      - ./entrypoint.sh:/data/configdb/entrypoint.sh:ro
 
   mongo3:
     image: mongo:latest
     container_name: mongo3
     networks:
       - mongo-net
+    ports:
+      - "27021:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=example
+    entrypoint: ["/data/configdb/entrypoint.sh"]
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all", "--keyFile", "/data/configdb/mongo-keyfile"]
+    volumes:
+      - mongo3-data:/data/db
+      - ./mongo-keyfile:/data/configdb/mongo-keyfile:ro
+      - ./entrypoint.sh:/data/configdb/entrypoint.sh:ro
 
   haproxy:
     image: haproxy:latest
@@ -41,3 +65,8 @@ services:
 networks:
   mongo-net:
     driver: bridge
+
+volumes:
+  mongo1-data:
+  mongo2-data:
+  mongo3-data:
